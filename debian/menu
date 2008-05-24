@@ -1,0 +1,3 @@
+?package(megahal):needs="text" section="Apps/Science" \
+	title="MegaHal" longtitle="Talk with MegaHal" \
+	command="/usr/bin/megahal"

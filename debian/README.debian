@@ -1,0 +1,36 @@
+Note that MegaHal depends on some data files to give it something to say. It
+can be started up without reading those files, but then it will be rather
+dumb until you teach it a lot.
+
+I've written a wrapper script for MegaHal, that creates a ~/.megahal/
+directory, and populates it with MegaHal data files. If you use this
+wrapper, each you start up MegaHal, it will resume where you left off 
+before. The wrapper is installed as /usr/bin/megahal-personal, since it lets
+you use your own personal MegaHal, which learns from you each time you use
+it.
+
+If you prefer access to the real MegaHal program, which looks for the data
+files in the current directory, run /usr/bin/megahal instead.
+
+It's also possible to set up a MegaHal that is accessed by all users of the
+system. Just make a world-writable directory and copy the MegaHal data files
+into it.
+
+Also, there is an example of an IRC bot that uses megahal in the examples/
+directory.
+
+-- Joey Hess <joeyh@debian.org>
+
+Packaging issues:
+=================
+
+ o The lintian warning package-installs-nonbinary-perl-in-usr-lib-perl5
+   is afaik a lintian bug (#199898).
+
+ o The perl library is not complete but it should be enough for batch
+   learning and simplifying the bot provided by Joey. If you feel like
+   doing the transition, send a wishlist bug with the patch.
+
+ o The python library sometimes segfaults at exit. Help appreciated.
+   
+-- Laurent Fousse <laurent@komite.net>

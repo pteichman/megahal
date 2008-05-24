@@ -13,7 +13,7 @@ conversation. It is possible to teach MegaHAL to talk about new topics,
 and in different languages.
 .BR megahal-personal
 is a varient of megahal that saves its state files in ~/.megahal/ when it
-exits. This lets each user have thier own personal megahal.
+exits. This lets each user have their own personal megahal.
 .SH OPTIONS
 .IP "--no-prompt, -p"
 Do not display prompt when asking user for input. This is a debian-specific
@@ -27,6 +27,11 @@ another program.
 Supress the startup banner. This is a debian-specific
 modification, and is useful mainly if you want to interface megahal to
 another program.
+.SH WARNING
+MegaHAL allows multiple lines to form a single input. Thus a single
+newline character is parsed as any other token and MegaHAL can output
+replies consisting of multiple lines. To end an input, you need to
+type enter twice.
 .SH "SEE ALSO"
 /usr/share/doc/megahal/README.TXT.gz
 .SH AUTHOR

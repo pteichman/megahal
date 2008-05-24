@@ -1,0 +1,25 @@
+Source: megahal
+Section: misc
+Priority: optional
+Build-Depends: debhelper, tcl8.3-dev, python-all-dev (>= 2.3.5-11), python-support (>= 0.3), python2.5-dev
+Maintainer: Debian QA Group <packages@qa.debian.org>
+Standards-Version: 3.7.2
+
+Package: megahal
+Architecture: any
+Depends: ${shlibs:Depends}, ${perl:Depends}
+Provides: ${python:Provides}
+Suggests: ${python:Depends}
+Description: conversation simulator that can learn as you talk to it
+ Conversation simulators are computer programs which give the appearance of
+ conversing with a user in natural language. Such programs are effective
+ because they exploit the fact that human beings tend to read much more
+ meaning into what is said than is actually there; we are fooled into reading
+ structure into chaos, and we interpret non-sequitur as valid conversation.
+ .
+ MegaHAL differs from conversation simulators such as Eliza in that it uses
+ a Markov Model to learn how to hold a conversation. It is possible to
+ teach MegaHAL to talk about new topics, and in different languages.
+ .
+ This package contains the megahal binary, and for your scripting
+ pleasure modules for perl, Python and Tcl.

@@ -225,8 +225,13 @@ static bool quiet=FALSE;
 static bool nowrap=FALSE;
 static bool nobanner=FALSE;
 
+/* WARNING : if you ever change the following name,
+ * please change the malloc below as well.
+ */
+
 static char *errorfilename = "megahal.log";
 static char *statusfilename = "megahal.txt";
+static char *dictionaryfilename = "megahal.dic";
 static DICTIONARY *words=NULL;
 static DICTIONARY *greets=NULL;
 static MODEL *model=NULL;
@@ -240,7 +245,7 @@ static DICTIONARY *aux=NULL;
 static DICTIONARY *grt=NULL;
 static SWAP *swp=NULL;
 static bool used_key;
-static char *directory=NULL;
+static char *directory=".";
 static char *last=NULL;
 
 static COMMAND command[] = {
@@ -408,11 +413,19 @@ void megahal_setdirectory (char *dir)
 
 void megahal_initialize(void)
 {
+    char *filenamebuff;
     errorfp = stderr;
     statusfp = stdout;
+    
+    filenamebuff = (char *) malloc (strlen (directory) + strlen(SEP) + 12);
 
-    initialize_error(errorfilename);
-    initialize_status(statusfilename);
+    sprintf(filenamebuff, "%s%s%s", directory, SEP, errorfilename);
+    initialize_error(filenamebuff);
+
+    sprintf(filenamebuff, "%s%s%s", directory, SEP, statusfilename);
+    initialize_status(filenamebuff);
+    free (filenamebuff);
+
     ignore(0);
 
 #ifdef AMIGA
@@ -1371,7 +1384,7 @@ void save_dictionary(FILE *file, DICTIONARY *dictionary)
 void load_dictionary(FILE *file, DICTIONARY *dictionary)
 {
     register int i;
-    int size;
+    BYTE4 size;
 
     fread(&size, sizeof(BYTE4), 1, file);
     progress("Loading dictionary", 0, 1);
@@ -1853,9 +1866,14 @@ void show_dictionary(DICTIONARY *dictionary)
     register unsigned int i;
     register unsigned int j;
     FILE *file;
+    char *filename;
 
-    file=fopen("megahal.dic", "w");
-    if(file==NULL) {
+    filename = (char *) malloc (sizeof(char)*(strlen(directory)+strlen(SEP)+12));
+
+    sprintf (filename, "%s%s%s", directory, SEP, dictionaryfilename);
+    file = fopen(filename, "w");
+    free (filename);
+    if(file == NULL) {
 	warn("show_dictionary", "Unable to open file");
 	return;
     }

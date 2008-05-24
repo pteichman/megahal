@@ -1,0 +1,27 @@
+#!/bin/sh
+# MegaHal wrapper that makes a ~/.megahal/ directory and populates it with
+# the megahal files. This lets each user on the system have thier own
+# personal megahal.
+
+DATADIR=/usr/lib/megahal/
+
+if [ ! -d "$HOME/.megahal" ]; then
+	mkdir $HOME/.megahal
+fi
+
+cd $HOME/.megahal
+
+
+for file in aux ban grt swp trn; do
+	if [ ! -e "megahal.$file" ]; then
+		cp $DATADIR/megahal.$file .
+	fi
+done
+
+# create the brain if it's the first time we're called
+
+if [ ! -e "megahal.brn" ]; then
+    echo -e "#quit\n\n" | megahal > /dev/null 2>&1
+fi
+
+exec megahal "$@"

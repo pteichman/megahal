@@ -7,7 +7,7 @@
 static PyObject *mhinitbrain(PyObject *self, PyObject *args)
 {
     megahal_initialize();
-    return Py_None;
+	return Py_BuildValue("");
 }
 
 static PyObject *mhdoreply(PyObject *self, PyObject *args)
@@ -32,13 +32,13 @@ static PyObject *mhlearn(PyObject *self, PyObject *args)
 
     megahal_learn_no_reply(input, 1);
 
-    return Py_None;
+	return Py_BuildValue("");
 }
 
 static PyObject *mhcleanup(PyObject *self, PyObject *args)
 {
     megahal_cleanup();
-    return Py_None;
+	return Py_BuildValue("");
 }
 
 static struct PyMethodDef mh_methods[] = {

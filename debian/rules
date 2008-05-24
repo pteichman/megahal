@@ -1,0 +1,91 @@
+#!/usr/bin/make -f
+# Sample debian/rules that uses debhelper. GNU copyright 1997 by Joey Hess.
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+export DH_COMPAT=4
+
+CFLAGS= -g -W -Wall -Wmissing-prototypes
+
+ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
+        CFLAGS += -O0
+else
+	CFLAGS += -O2
+endif
+		
+
+TCLVERSION=8.3
+PYVERS=$(shell pysupport-parseversions -l debian/pyversions)
+
+build: build-stamp
+build-stamp:
+	dh_testdir	
+	$(MAKE) "C_INCLUDE_PATH=/usr/include/tcl$(TCLVERSION)" "CFLAGS=$(CFLAGS)" 
+	$(MAKE) perlmodule
+	
+	for python in $(PYVERS); do \
+		$$python setup.py build; \
+	done	
+
+	touch build-stamp
+
+clean:
+	dh_testdir
+	dh_testroot
+	rm -f build-stamp
+	make clean
+	for python in $(PYVERS); do \
+		$$python setup.py clean; \
+	done
+	dh_clean
+
+# Build architecture-independent files here.
+binary-indep: build
+# We have nothing to do by default.
+
+# Build architecture-dependent files here.
+binary-arch: build
+	dh_testdir
+	dh_testroot
+	dh_clean -k
+	dh_installdirs 
+	install -s megahal debian/megahal/usr/bin
+	install debian/megahal-personal debian/megahal/usr/bin
+	cp -a megahal.aux megahal.ban megahal.grt megahal.swp megahal.trn \
+		debian/megahal/usr/lib/megahal
+	cp -a libmh_tcl.so debian/megahal/usr/lib/megahal
+# Python module
+	for python in $(PYVERS); do \
+		$$python setup.py install --root=debian/megahal \
+                                          --install-lib=/usr/lib/python-support/megahal/$$python; \
+	done
+	dh_pysupport
+# Perl module
+	make perlmodule-install DESTDIR=$(CURDIR)/debian/megahal
+	dh_installdocs 
+	dh_installexamples 
+	dh_installmenu
+#	dh_installinit
+	dh_installcron
+	dh_installman docs/megahal.1
+	dh_installman docs/megahal_interfaces.3
+	dh_link /usr/share/man/man1/megahal.1 /usr/share/man/man1/megahal-personal.1
+#	dh_undocumented
+	dh_installchangelogs
+	dh_strip
+	dh_compress
+	dh_fixperms
+	dh_installdeb
+	dh_perl Megahal
+	dh_shlibdeps
+	dh_gencontrol
+#	dh_makeshlibs
+	dh_md5sums
+	dh_builddeb
+
+source diff:                                                                  
+	@echo >&2 'source and diff are obsolete - use dpkg-source -b'; false
+
+binary: binary-indep binary-arch
+.PHONY: build clean binary-indep binary-arch binary

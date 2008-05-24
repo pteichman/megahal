@@ -1,0 +1,18 @@
+This package was originally debianized by Joey Hess <joeyh@debian.org>.
+
+The next debian maintainer was David N. Welton <davidw@debian.org>.
+
+It was downloaded from http://megahal.sourceforge.net/
+
+Upstreams Authors: Jason Hutchens <jason_huntchens@users.sourceforge.net>. 
+                   David N. Welton <davidw@debian.org>
+
+This software is Copyright (C) 2000-2004 Jason Hutchens, David N. Welton and
+others.
+
+You are free to distribute this software under the terms of
+the GNU General Public License, version 2, or (at your option)
+any later version.
+
+On Debian systems, the complete text of the GNU General Public
+License can be found in the file `/usr/share/common-licenses/GPL'.

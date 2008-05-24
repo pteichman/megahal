@@ -1,0 +1,262 @@
+megahal (9.1.1a-5build1) intrepid; urgency=low
+
+  * Rebuild for the perl 5.10 transition. 
+
+ -- Michael Bienia <geser@ubuntu.com>  Sat, 24 May 2008 11:47:59 +0200
+
+megahal (9.1.1a-5) unstable; urgency=low
+
+  * QA upload.
+  * Fix stack corruption (closes: #454212).
+    Patch by Niko Tyni.
+  * Fix misc. capitalization issues with project names.
+  * Add missing perl dependencies (closes: #463146).
+
+ -- Laurent Fousse <laurent@komite.net>  Wed, 13 Feb 2008 22:39:17 +0100
+
+megahal (9.1.1a-4) unstable; urgency=low
+
+  * Orphaning package.
+
+ -- Laurent Fousse <laurent@komite.net>  Wed, 06 Feb 2008 22:56:49 +0100
+
+megahal (9.1.1a-3) unstable; urgency=low
+
+  * Added explicit build-depends on python2.5 (closes: #416040).
+  * Updated Standards-Versions to 3.7.2 (no change needed).
+
+ -- Laurent Fousse <laurent@komite.net>  Sat, 24 Mar 2007 11:44:58 +0100
+
+megahal (9.1.1a-2) unstable; urgency=low
+
+  * Update python bindings to >= 2.4 (closes: #403971).
+  * Switch to DH_COMPAT=4.
+  * Thanks Bernd Zeimetz who did the work for this
+    revision.
+
+ -- Laurent Fousse <laurent@komite.net>  Fri, 23 Mar 2007 22:13:50 +0100
+
+megahal (9.1.1a-1) unstable; urgency=low
+
+  * Fix misspelling in megahal.1 (closes: #338068).
+  * Repackaged tarball to get rid of editor backup.
+
+ -- Laurent Fousse <laurent@komite.net>  Fri, 23 Dec 2005 12:47:23 +0100
+
+megahal (9.1.1-4) unstable; urgency=low
+
+  * Fixed python "deallocating None" bug, thanks Joris Bontje.
+
+ -- Laurent Fousse <laurent@komite.net>  Fri, 11 Jun 2004 11:30:42 +0200
+
+megahal (9.1.1-3) unstable; urgency=low
+
+  * Change default directory to fix initialization error in python
+    (closes: #250082).
+
+ -- Laurent Fousse <laurent@komite.net>  Thu, 20 May 2004 22:22:46 +0200
+
+megahal (9.1.1-2) unstable; urgency=low
+
+  * Added warning in manpage about newline parsing (closes: #245581).
+
+ -- Laurent Fousse <laurent@komite.net>  Wed,  5 May 2004 21:09:06 +0200
+
+megahal (9.1.1-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Laurent Fousse <laurent@komite.net>  Wed, 25 Feb 2004 22:11:40 +0100
+
+megahal (9.0.3+20030103-2) unstable; urgency=low
+
+  * megahal-personal generates brain at first call, no longer displaying
+    a cryptic warning (closes: #178063).
+  * Updated Standards-Versions to 3.6.1 (no change needed).
+
+ -- Laurent Fousse <laurent@komite.net>  Sat, 31 Jan 2004 17:36:37 +0100
+
+megahal (9.0.3+20030103-1) unstable; urgency=low
+
+  * New maintainer (closes: #164903, #183197).
+  * Packaged latest CVS version (closes: #201904).
+  * Added perl script for quick importation of text files
+    (closes: #117336, #169805).
+  * Updated megahal_interfaces(3) manpage.
+  * Changed menu section to Apps/Science (closes: #201133).
+  * Updated copyright file.
+  * Changed Standards-Versions to 3.6.1.0
+  * Added patch by Matt Behrens for the example bot (closes: #226711).
+  * Cleaned code wrt signedness and tests.
+  * Follow best short description practices and drop the article.
+
+ -- Laurent Fousse <laurent@komite.net>  Thu,  8 Jan 2004 20:29:09 +0100
+
+megahal (9.0.3-7) unstable; urgency=low
+
+  * Orphaning package.  After numerous people have said they were going to
+    take it on, I give up.
+
+ -- David N. Welton <davidw@debian.org>  Sun,  2 Mar 2003 22:11:18 -0800
+
+megahal (9.0.3-6) unstable; urgency=low
+
+  * Added patch from Jose Carlos Garcia Sogo to depend on python1.5-dev
+    (closes: #133711)
+
+ -- David N. Welton <davidw@debian.org>  Sat, 16 Feb 2002 12:29:42 +0100
+
+megahal (9.0.3-5) unstable; urgency=low
+
+  * Added -fPIC to Makefile for HPPA folks.
+  * (closes: #103682)
+
+ -- David N. Welton <davidw@debian.org>  Fri,  6 Jul 2001 12:14:10 +0200
+
+megahal (9.0.3-4) unstable; urgency=low
+
+  * Updated build-depends to tcl8.3-dev.
+  * (closes: #100794)
+
+  * Cannot reproduce this bug anymore.  It was for an older version.
+  * (closes: #100794)
+
+  * Fix -h command line option.
+  * (closes: #100814)
+
+ -- David N. Welton <davidw@debian.org>  Fri, 15 Jun 2001 16:07:32 +0200
+
+megahal (9.0.3-3) unstable; urgency=low
+
+  * Added 'help' command line option.
+
+  * Closes #75775.
+
+ -- David N. Welton <davidw@debian.org>  Sun, 25 Feb 2001 20:43:36 +0100
+
+megahal (9.0.3-2) unstable; urgency=low
+
+  * Updated dependency.
+
+  * (Fixes #76916)
+
+ -- David N. Welton <davidw@debian.org>  Fri, 16 Feb 2001 14:47:33 +0100
+
+megahal (9.0.3-1) unstable; urgency=low
+
+  * Updated maintainer entry.
+
+  * New version with my own changes to megahal.  For now these are not
+    included in the .deb, but will move towards librarifying megahal, and
+    providing C, Tcl and Python API's to it.
+
+ -- David N. Welton <davidw@debian.org>  Tue,  7 Nov 2000 15:16:39 +0100
+
+megahal (8.6-11) unstable; urgency=low
+
+  * Updated Maintainer: entry.
+
+ -- David N. Welton <davidw@linuxcare.com>  Fri,  1 Sep 2000 19:23:25 +0200
+
+megahal (8.6-10) unstable; urgency=low
+
+  * Updated Maintainer: entry
+
+ -- Eric M. Schwartz <emschwar@debian.org>  Mon, 21 Aug 2000 19:41:00 -0600
+
+megahal (8.6-9) unstable; urgency=low
+
+  * Patch from Clint Adams <schizo@debian.org> to give the irc bot multiple
+    channel support. Closes: #64235
+
+ -- Joey Hess <joeyh@debian.org>  Tue, 16 May 2000 15:34:57 -0700
+
+megahal (8.6-8) unstable; urgency=low
+
+  * Build dep.
+
+ -- Joey Hess <joeyh@debian.org>  Sat,  4 Dec 1999 13:29:07 -0800
+
+megahal (8.6-7) unstable; urgency=low
+
+  * FHS
+
+ -- Joey Hess <joeyh@debian.org>  Mon,  6 Sep 1999 14:46:26 -0700
+
+megahal (8.6-6) unstable; urgency=low
+
+  * Added to examples directory, a complete megahal irc bot that connect to
+    a channel, listens and learns form everything said, and responds to users.
+  * Also added a perl module to make it easy for other perl programs
+    to interface to megahal.
+  * Changes by Adam Heath <doogie@debian.org>:
+    - This release has several patches used to make it more wrapper
+      friendly, ie when used inside of a perl wrapper for the purpose
+      of placing it on irc.
+   - Added command word '#QUIET' to toggle automatic responses.
+   - Added --no-prompt(-p) to remove prompt.
+   - Added --no-wrap(-w) to keep it from wrapping it replies.
+   - Added --no-banner(-b) to suppress the banner on startup.
+   - Added a clean target to the megahal makefile.
+  * Updated man page to document new command line switches.
+
+ -- Joey Hess <joeyh@debian.org>  Sat, 15 Dec 1998 00:21:28 -0600
+
+megahal (8.6-5) unstable; urgency=low
+
+  * Tried to fix bug #25729, a problem with non-static initializers.
+
+ -- Joey Hess <joeyh@debian.org>  Sat, 15 Aug 1998 12:32:58 -0700
+
+megahal (8.6-4) unstable; urgency=low
+
+  * Really reupload with full source.
+
+ -- Joey Hess <joeyh@debian.org>  Thu, 18 Jun 1998 11:51:08 -0700
+
+megahal (8.6-3) unstable; urgency=low
+
+  * Re-upload including full source, because the non-maintainer release
+    had a different source tarball somehow.
+
+ -- Joey Hess <joeyh@debian.org>  Fri, 12 Jun 1998 21:25:38 -0700
+
+megahal (8.6-2) unstable; urgency=low
+
+  * Grr. Someone did a non-maintainer release of version 8.6 becuase I was a
+    little slow getting it out. They called it version 8.6-1.1. This is
+    _wrong_. Whoever did that, please use -0.0 in the future, like it says
+    to in the packaging manual.
+  * No changes, just a new version number.
+
+ -- Joey Hess <joeyh@debian.org>  Thu, 28 May 1998 06:20:38 -0400
+
+megahal (8.6-1) unstable; urgency=low
+
+  * New upstream version.
+  * Seems to have integrated all the changes I sent to the author.
+
+ -- Joey Hess <joeyh@debian.org>  Tue, 26 May 1998 00:46:19 -0400
+
+megahal (8.1-3) unstable; urgency=low
+
+  * Fixed minor lintian errors.
+
+ -- Joey Hess <joeyh@debian.org>  Thu, 12 Mar 1998 22:29:32 -0800
+
+megahal (8.1-2) unstable; urgency=low
+
+  * Added a man page.
+  * Corrected fsf mailing address.
+
+ -- Joey Hess <joeyh@debian.org>  Mon,  9 Feb 1998 16:38:04 -0800
+
+megahal (8.1-1) unstable; urgency=low
+
+  * First release.
+  * Fixed 2 bugs that made it crash if it couldn't find a brain or training
+    file. (Forwarded to author.)
+
+ -- Joey Hess <joeyh@debian.org>  Sun, 11 Jan 1998 21:50:52 -0500
+
+
