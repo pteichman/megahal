@@ -1,0 +1,17 @@
+Megahal/Makefile
+Megahal/Megahal.bs
+Megahal/Megahal.c
+Megahal/Megahal.o
+Megahal/blib
+Megahal/const-c.inc
+Megahal/const-xs.inc
+Megahal/megahal.o
+Megahal/pm_to_blib
+build
+libmh_tcl.so
+main.o
+megahal
+megahal.dic.backup
+megahal.o
+tcl-interface.o
+
