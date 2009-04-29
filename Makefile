@@ -41,7 +41,7 @@ tcllib: megahal.o tcl-interface.o
 	gcc -fPIC -shared -Wl,-soname,libmh_tcl.so -o libmh_tcl.so megahal.o tcl-interface.o
 
 pythonmodule: python-interface.c megahal.c
-	python setup.py build
+	python setup.py build -g
 
 pythonmodule-install:
 	python setup.py install --root=$(DESTDIR)
