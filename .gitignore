@@ -11,7 +11,11 @@ build
 libmh_tcl.so
 main.o
 megahal
+megahal.brn
+megahal.dic
 megahal.dic.backup
+megahal.log
 megahal.o
+megahal.txt
 tcl-interface.o
 
