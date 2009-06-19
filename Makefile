@@ -25,7 +25,7 @@ CFLAGS=-g -Wall
 all:	megahal tcllib pythonmodule perlmodule
 
 megahal: main.o megahal.o megahal.h backup
-	gcc $(CFLAGS) -o megahal megahal.o main.o -lm $(DEBUG)
+	gcc $(CFLAGS) -o megahal megahal.o main.o -lm -lgc $(DEBUG)
 	@echo "MegaHAL is up to date"
 
 megahal.o: megahal.c megahal.h

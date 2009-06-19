@@ -27,6 +27,7 @@
 #include <errno.h>
 #include <unistd.h>
 
+#include <gc/gc.h>
 
 /* extern errorfp;
 extern statusfp;
@@ -103,6 +104,8 @@ int main(int argc, char **argv)
 	}
     }
 
+    GC_init();
+
     if (directory_set == 0)
     {
         if ((my_directory = getenv("MEGAHAL_DIR")))
@@ -120,7 +123,7 @@ int main(int argc, char **argv)
                 fprintf (stderr, "Cannot find your home directory.\n");
                 exit (1);
             }
-            my_directory = malloc (12 + strlen (my_directory));
+            my_directory = GC_malloc (12 + strlen (my_directory));
             strcpy (my_directory, getenv ("HOME"));
             strcat (my_directory, "/.megahal");
             if (stat (my_directory, &dir_stat))

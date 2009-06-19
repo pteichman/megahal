@@ -122,6 +122,8 @@
 #include "debug.h"
 #endif
 
+#include "gc/gc.h"
+
 #define P_THINK 40
 #define D_KEY 100000
 #define V_KEY 50000
@@ -417,14 +419,13 @@ void megahal_initialize(void)
     errorfp = stderr;
     statusfp = stdout;
     
-    filenamebuff = (char *) malloc (strlen (directory) + strlen(SEP) + 12);
+    filenamebuff = (char *) GC_malloc (strlen (directory) + strlen(SEP) + 12);
 
     sprintf(filenamebuff, "%s%s%s", directory, SEP, errorfilename);
     initialize_error(filenamebuff);
 
     sprintf(filenamebuff, "%s%s%s", directory, SEP, statusfilename);
     initialize_status(filenamebuff);
-    free (filenamebuff);
 
     ignore(0);
 
@@ -710,7 +711,7 @@ char *read_input(char *prompt)
     finish=FALSE;
     length=0;
     if(input==NULL) {
-	input=(char *)malloc(sizeof(char));
+	input=(char *)GC_malloc(sizeof(char));
 	if(input==NULL) {
 	    error("read_input", "Unable to allocate the input string");
 	    return(input);
@@ -756,7 +757,7 @@ char *read_input(char *prompt)
 	 *		character.
 	 */
 	++length;
-	input=(char *)realloc((char *)input,sizeof(char)*(length+1));
+	input=(char *)GC_realloc((char *)input,sizeof(char)*(length+1));
 	if(input==NULL) {
 	    error("read_input", "Unable to re-allocate the input string");
 	    return(NULL);
@@ -1006,14 +1007,14 @@ static char *format_output(char *output)
     register unsigned int i,j,c;
     int l;
     if(formatted==NULL) {
-	formatted=(char *)malloc(sizeof(char));
+	formatted=(char *)GC_malloc(sizeof(char));
 	if(formatted==NULL) {
 	    error("format_output", "Unable to allocate formatted");
 	    return("ERROR");
 	}
     }
 
-    formatted=(char *)realloc((char *)formatted, sizeof(char)*(strlen(output)+2));
+    formatted=(char *)GC_realloc((char *)formatted, sizeof(char)*(strlen(output)+2));
     if(formatted==NULL) {
 	error("format_output", "Unable to re-allocate formatted");
 	return("ERROR");
@@ -1075,10 +1076,10 @@ BYTE2 add_word(DICTIONARY *dictionary, STRING word)
      *		Allocate one more entry for the word index
      */
     if(dictionary->index==NULL) {
-	dictionary->index=(BYTE2 *)malloc(sizeof(BYTE2)*
+	dictionary->index=(BYTE2 *)GC_malloc(sizeof(BYTE2)*
 					  (dictionary->size));
     } else {
-	dictionary->index=(BYTE2 *)realloc((BYTE2 *)
+	dictionary->index=(BYTE2 *)GC_realloc((BYTE2 *)
 					   (dictionary->index),sizeof(BYTE2)*(dictionary->size));
     }
     if(dictionary->index==NULL) {
@@ -1090,13 +1091,13 @@ BYTE2 add_word(DICTIONARY *dictionary, STRING word)
      *		Allocate one more entry for the word array
      */
     if(dictionary->entry==NULL) {
-	dictionary->entry=(STRING *)malloc(sizeof(STRING)*(dictionary->size));
+	dictionary->entry=(STRING *)GC_malloc(sizeof(STRING)*(dictionary->size));
     } else {
-	dictionary->entry=(STRING *)realloc((STRING *)(dictionary->entry),
+	dictionary->entry=(STRING *)GC_realloc((STRING *)(dictionary->entry),
 					    sizeof(STRING)*(dictionary->size));
     }
     if(dictionary->entry==NULL) {
-	error("add_word", "Unable to reallocate the dictionary to %d elements.", dictionary->size);
+	error("add_word", "Unable to GC_reallocate the dictionary to %d elements.", dictionary->size);
 	goto fail;
     }
 
@@ -1104,7 +1105,7 @@ BYTE2 add_word(DICTIONARY *dictionary, STRING word)
      *		Copy the new word into the word array
      */
     dictionary->entry[dictionary->size-1].length=word.length;
-    dictionary->entry[dictionary->size-1].word=(char *)malloc(sizeof(char)*
+    dictionary->entry[dictionary->size-1].word=(char *)GC_malloc(sizeof(char)*
 							      (word.length));
     if(dictionary->entry[dictionary->size-1].word==NULL) {
 	error("add_word", "Unable to allocate the word.");
@@ -1260,11 +1261,9 @@ void free_dictionary(DICTIONARY *dictionary)
 {
     if(dictionary==NULL) return;
     if(dictionary->entry!=NULL) {
-	free(dictionary->entry);
 	dictionary->entry=NULL;
     }
     if(dictionary->index!=NULL) {
-	free(dictionary->index);
 	dictionary->index=NULL;
     }
     dictionary->size=0;
@@ -1281,14 +1280,9 @@ void free_model(MODEL *model)
     if(model->backward!=NULL) {
 	free_tree(model->backward);
     }
-    if(model->context!=NULL) {
-	free(model->context);
-    }
     if(model->dictionary!=NULL) {
 	free_dictionary(model->dictionary);
-	free(model->dictionary);
     }
-    free(model);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -1309,9 +1303,7 @@ void free_tree(TREE *tree)
 	    if(level==0) progress(NULL, i, tree->branch);
 	}
 	if(level==0) progress(NULL, 1, 1);
-	free(tree->tree);
     }
-    free(tree);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -1341,7 +1333,7 @@ DICTIONARY *new_dictionary(void)
 {
     DICTIONARY *dictionary=NULL;
 
-    dictionary=(DICTIONARY *)malloc(sizeof(DICTIONARY));
+    dictionary=(DICTIONARY *)GC_malloc(sizeof(DICTIONARY));
     if(dictionary==NULL) {
 	error("new_dictionary", "Unable to allocate dictionary.");
 	return(NULL);
@@ -1424,7 +1416,7 @@ void load_word(FILE *file, DICTIONARY *dictionary)
     STRING word;
 
     fread(&(word.length), sizeof(BYTE1), 1, file);
-    word.word=(char *)malloc(sizeof(char)*word.length);
+    word.word=(char *)GC_malloc(sizeof(char)*word.length);
     if(word.word==NULL) {
 	error("load_word", "Unable to allocate word");
 	return;
@@ -1432,7 +1424,6 @@ void load_word(FILE *file, DICTIONARY *dictionary)
     for(i=0; i<word.length; ++i)
 	fread(&(word.word[i]), sizeof(char), 1, file);
     add_word(dictionary, word);
-    free(word.word);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -1450,7 +1441,7 @@ TREE *new_node(void)
     /*
      *		Allocate memory for the new node
      */
-    node=(TREE *)malloc(sizeof(TREE));
+    node=(TREE *)GC_malloc(sizeof(TREE));
     if(node==NULL) {
 	error("new_node", "Unable to allocate the node.");
 	goto fail;
@@ -1483,7 +1474,7 @@ MODEL *new_model(int order)
 {
     MODEL *model=NULL;
 
-    model=(MODEL *)malloc(sizeof(MODEL));
+    model=(MODEL *)GC_malloc(sizeof(MODEL));
     if(model==NULL) {
 	error("new_model", "Unable to allocate model.");
 	goto fail;
@@ -1492,7 +1483,7 @@ MODEL *new_model(int order)
     model->order=order;
     model->forward=new_node();
     model->backward=new_node();
-    model->context=(TREE **)malloc(sizeof(TREE *)*(order+2));
+    model->context=(TREE **)GC_malloc(sizeof(TREE *)*(order+2));
     if(model->context==NULL) {
 	error("new_model", "Unable to allocate context array.");
 	goto fail;
@@ -1646,9 +1637,9 @@ void add_node(TREE *tree, TREE *node, int position)
      *		the sub-tree from scratch.
      */
     if(tree->tree==NULL) {
-	tree->tree=(TREE **)malloc(sizeof(TREE *)*(tree->branch+1));
+	tree->tree=(TREE **)GC_malloc(sizeof(TREE *)*(tree->branch+1));
     } else {
-	tree->tree=(TREE **)realloc((TREE **)(tree->tree),sizeof(TREE *)*
+	tree->tree=(TREE **)GC_realloc((TREE **)(tree->tree),sizeof(TREE *)*
 				    (tree->branch+1));
     }
     if(tree->tree==NULL) {
@@ -1868,11 +1859,10 @@ void show_dictionary(DICTIONARY *dictionary)
     FILE *file;
     char *filename;
 
-    filename = (char *) malloc (sizeof(char)*(strlen(directory)+strlen(SEP)+12));
+    filename = (char *) GC_malloc (sizeof(char)*(strlen(directory)+strlen(SEP)+12));
 
     sprintf (filename, "%s%s%s", directory, SEP, dictionaryfilename);
     file = fopen(filename, "w");
-    free (filename);
     if(file == NULL) {
 	warn("show_dictionary", "Unable to open file");
 	return;
@@ -1899,12 +1889,12 @@ void save_model(char *modelname, MODEL *model)
     FILE *file;
     static char *filename=NULL;
 
-    if(filename==NULL) filename=(char *)malloc(sizeof(char)*1);
+    if(filename==NULL) filename=(char *)GC_malloc(sizeof(char)*1);
 
     /*
      *    Allocate memory for the filename
      */
-    filename=(char *)realloc(filename,
+    filename=(char *)GC_realloc(filename,
 			     sizeof(char)*(strlen(directory)+strlen(SEP)+12));
     if(filename==NULL) error("save_model","Unable to allocate filename");
 
@@ -1973,7 +1963,7 @@ void load_tree(FILE *file, TREE *node)
 
     if(node->branch==0) return;
 
-    node->tree=(TREE **)malloc(sizeof(TREE *)*(node->branch));
+    node->tree=(TREE **)GC_malloc(sizeof(TREE *)*(node->branch));
     if(node->tree==NULL) {
 	error("load_tree", "Unable to allocate subtree");
 	return;
@@ -2067,9 +2057,9 @@ void make_words(char *input, DICTIONARY *words)
 	     *		Add the word to the dictionary
 	     */
 	    if(words->entry==NULL)
-		words->entry=(STRING *)malloc((words->size+1)*sizeof(STRING));
+		words->entry=(STRING *)GC_malloc((words->size+1)*sizeof(STRING));
 	    else
-		words->entry=(STRING *)realloc(words->entry, (words->size+1)*sizeof(STRING));
+		words->entry=(STRING *)GC_realloc(words->entry, (words->size+1)*sizeof(STRING));
 
 	    if(words->entry==NULL) {
 		error("make_words", "Unable to reallocate dictionary");
@@ -2094,9 +2084,9 @@ void make_words(char *input, DICTIONARY *words)
      */
     if(isalnum(words->entry[words->size-1].word[0])) {
 	if(words->entry==NULL)
-	    words->entry=(STRING *)malloc((words->size+1)*sizeof(STRING));
+	    words->entry=(STRING *)GC_malloc((words->size+1)*sizeof(STRING));
 	else
-	    words->entry=(STRING *)realloc(words->entry, (words->size+1)*sizeof(STRING));
+	    words->entry=(STRING *)GC_realloc(words->entry, (words->size+1)*sizeof(STRING));
 	if(words->entry==NULL) {
 	    error("make_words", "Unable to reallocate dictionary");
 	    return;
@@ -2173,7 +2163,6 @@ void make_greeting(DICTIONARY *words)
 {
     register unsigned int i;
 
-    for(i=0; i<words->size; ++i) free(words->entry[i].word);
     free_dictionary(words);
     if(grt->size>0) (void)add_word(words, grt->entry[rnd(grt->size)]);
 }
@@ -2208,7 +2197,7 @@ char *generate_reply(MODEL *model, DICTIONARY *words)
      *		Make sure some sort of reply exists
      */
     if(output_none==NULL) {
-	output_none=malloc(40);
+	output_none=GC_malloc(40);
 	if(output_none!=NULL)
 	    strcpy(output_none, "I don't know enough to answer you yet!");
     }
@@ -2278,7 +2267,6 @@ DICTIONARY *make_keywords(MODEL *model, DICTIONARY *words)
     int c;
 
     if(keys==NULL) keys=new_dictionary();
-    for(i=0; i<keys->size; ++i) free(keys->entry[i].word);
     free_dictionary(keys);
 
     for(i=0; i<words->size; ++i) {
@@ -2394,9 +2382,9 @@ DICTIONARY *reply(MODEL *model, DICTIONARY *keys)
 	 *		Append the symbol to the reply dictionary.
 	 */
 	if(replies->entry==NULL)
-	    replies->entry=(STRING *)malloc((replies->size+1)*sizeof(STRING));
+	    replies->entry=(STRING *)GC_malloc((replies->size+1)*sizeof(STRING));
 	else
-	    replies->entry=(STRING *)realloc(replies->entry, (replies->size+1)*sizeof(STRING));
+	    replies->entry=(STRING *)GC_realloc(replies->entry, (replies->size+1)*sizeof(STRING));
 	if(replies->entry==NULL) {
 	    error("reply", "Unable to reallocate dictionary");
 	    return(NULL);
@@ -2444,9 +2432,9 @@ DICTIONARY *reply(MODEL *model, DICTIONARY *keys)
 	 *		Prepend the symbol to the reply dictionary.
 	 */
 	if(replies->entry==NULL)
-	    replies->entry=(STRING *)malloc((replies->size+1)*sizeof(STRING));
+	    replies->entry=(STRING *)GC_malloc((replies->size+1)*sizeof(STRING));
 	else
-	    replies->entry=(STRING *)realloc(replies->entry, (replies->size+1)*sizeof(STRING));
+	    replies->entry=(STRING *)GC_realloc(replies->entry, (replies->size+1)*sizeof(STRING));
 	if(replies->entry==NULL) {
 	    error("reply", "Unable to reallocate dictionary");
 	    return(NULL);
@@ -2563,10 +2551,10 @@ char *make_output(DICTIONARY *words)
     int length;
     static char *output_none=NULL;
 
-    if(output_none==NULL) output_none=malloc(40);
+    if(output_none==NULL) output_none=GC_malloc(40);
 
     if(output==NULL) {
-	output=(char *)malloc(sizeof(char));
+	output=(char *)GC_malloc(sizeof(char));
 	if(output==NULL) {
 	    error("make_output", "Unable to allocate output");
 	    return(output_none);
@@ -2582,7 +2570,7 @@ char *make_output(DICTIONARY *words)
     length=1;
     for(i=0; i<words->size; ++i) length+=words->entry[i].length;
 
-    output=(char *)realloc(output, sizeof(char)*length);
+    output=(char *)GC_realloc(output, sizeof(char)*length);
     if(output==NULL) {
 	error("make_output", "Unable to reallocate output.");
 	if(output_none!=NULL)
@@ -2725,7 +2713,7 @@ SWAP *new_swap(void)
 {
     SWAP *list;
 
-    list=(SWAP *)malloc(sizeof(SWAP));
+    list=(SWAP *)GC_malloc(sizeof(SWAP));
     if(list==NULL) {
 	error("new_swap", "Unable to allocate swap");
 	return(NULL);
@@ -2749,7 +2737,7 @@ void add_swap(SWAP *list, char *s, char *d)
     list->size+=1;
 
     if(list->from==NULL) {
-	list->from=(STRING *)malloc(sizeof(STRING));
+	list->from=(STRING *)GC_malloc(sizeof(STRING));
 	if(list->from==NULL) {
 	    error("add_swap", "Unable to allocate list->from");
 	    return;
@@ -2757,20 +2745,20 @@ void add_swap(SWAP *list, char *s, char *d)
     }
 
     if(list->to==NULL) {
-	list->to=(STRING *)malloc(sizeof(STRING));
+	list->to=(STRING *)GC_malloc(sizeof(STRING));
 	if(list->to==NULL) {
 	    error("add_swap", "Unable to allocate list->to");
 	    return;
 	}
     }
 
-    list->from=(STRING *)realloc(list->from, sizeof(STRING)*(list->size));
+    list->from=(STRING *)GC_realloc(list->from, sizeof(STRING)*(list->size));
     if(list->from==NULL) {
 	error("add_swap", "Unable to reallocate from");
 	return;
     }
 
-    list->to=(STRING *)realloc(list->to, sizeof(STRING)*(list->size));
+    list->to=(STRING *)GC_realloc(list->to, sizeof(STRING)*(list->size));
     if(list->to==NULL) {
 	error("add_swap", "Unable to reallocate to");
 	return;
@@ -2830,9 +2818,6 @@ void free_swap(SWAP *swap)
 	free_word(swap->from[i]);
 	free_word(swap->to[i]);
     }
-    free(swap->from);
-    free(swap->to);
-    free(swap);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -3015,7 +3000,7 @@ void usleep(int period)
 #ifdef __mac_os
 char *strdup(const char *str)
 {
-    char *rval=(char *)malloc(strlen(str)+1);
+    char *rval=(char *)GC_malloc(strlen(str)+1);
 
     if(rval!=NULL) strcpy(rval, str);
 
@@ -3245,12 +3230,12 @@ void load_personality(MODEL **model)
     FILE *file;
     static char *filename=NULL;
 
-    if(filename==NULL) filename=(char *)malloc(sizeof(char)*1);
+    if(filename==NULL) filename=(char *)GC_malloc(sizeof(char)*1);
 
     /*
      *		Allocate memory for the filename
      */
-    filename=(char *)realloc(filename,
+    filename=(char *)GC_realloc(filename,
 			     sizeof(char)*(strlen(directory)+strlen(SEP)+12));
     if(filename==NULL) error("load_personality","Unable to allocate filename");
 
@@ -3267,7 +3252,6 @@ void load_personality(MODEL **model)
 	    if(file==NULL) {
 		fprintf(stdout, "Unable to change MegaHAL personality to \"%s\".\n"
 			"Reverting to MegaHAL personality \"%s\".\n", directory, last);
-		free(directory);
 		directory=strdup(last);
 		return;
 	    }
@@ -3323,7 +3307,7 @@ void change_personality(DICTIONARY *command, unsigned int position, MODEL **mode
 {
 
     if(directory == NULL) {
-	directory = (char *)malloc(sizeof(char)*(strlen(DEFAULT)+1));
+	directory = (char *)GC_malloc(sizeof(char)*(strlen(DEFAULT)+1));
 	if(directory == NULL) {
 	    error("change_personality", "Unable to allocate directory");
 	} else {
@@ -3338,7 +3322,7 @@ void change_personality(DICTIONARY *command, unsigned int position, MODEL **mode
     if((command == NULL)||((position+2)>=command->size)) {
 	/* no dir set, so we leave it to whatever was set above */
     } else {
-        directory=(char *)realloc(directory,
+        directory=(char *)GC_realloc(directory,
                                   sizeof(char)*(command->entry[position+2].length+1));
         if(directory == NULL)
             error("change_personality", "Unable to allocate directory");
@@ -3366,7 +3350,6 @@ void free_words(DICTIONARY *words)
 
 void free_word(STRING word)
 {
-    free(word.word);
 }
 
 /*===========================================================================*/
