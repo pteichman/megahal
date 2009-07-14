@@ -22,7 +22,7 @@ TCLINCLUDE=-I/usr/include/tcl$(TCLVERSION)
 CFLAGS=-g -Wall
 
 
-all:	megahal tcllib pythonmodule perlmodule
+all:	megahal tcllib pythonmodule perlmodule rubymodule
 
 megahal: main.o megahal.o megahal.h backup
 	gcc $(CFLAGS) -o megahal megahal.o main.o -lm $(DEBUG)
@@ -52,6 +52,12 @@ perlmodule: megahal.c megahal.h
 perlmodule-install:
 	cd Megahal && make install DESTDIR=$(DESTDIR)
 
+rubymodule:
+	cd ruby && ruby extconf.rb && make
+
+rubymodule-install:
+	cd ruby && make install DESTDIR=$(DESTDIR)
+
 version:
 	./cvsversion.tcl
 
@@ -70,6 +76,7 @@ clean:
 		rm megahal.dic.backup;\
 	fi
 	rm -f *.o *.so *~
+	cd ruby && make clean
 
 backup:
 	if [ ! -e megahal.dic.backup ];then\
