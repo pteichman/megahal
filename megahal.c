@@ -131,7 +131,7 @@
 #define MIN(a,b) ((a)<(b))?(a):(b)
 
 #define COOKIE "MegaHALv8"
-#define TIMEOUT 1
+#define TIMEOUT 1000 /* milliseconds */
 
 #define DEFAULT "."
 
@@ -2178,6 +2178,12 @@ void make_greeting(DICTIONARY *words)
     if(grt->size>0) (void)add_word(words, grt->entry[rnd(grt->size)]);
 }
 
+int ms_since(struct timeval *start, struct timeval *end)
+{
+    return (end->tv_sec-start->tv_sec)*1000 +
+	(end->tv_usec-start->tv_usec)/1000;
+}
+
 /*---------------------------------------------------------------------------*/
 /*
  *    Function:   Generate_Reply
@@ -2196,7 +2202,8 @@ char *generate_reply(MODEL *model, DICTIONARY *words)
     char *output;
     static char *output_none=NULL;
     int count;
-    int basetime;
+    struct timeval basetime;
+    struct timeval endtime;
     int max_length;
     int timeout = TIMEOUT;
 
@@ -2224,7 +2231,9 @@ char *generate_reply(MODEL *model, DICTIONARY *words)
      */
     max_surprise=(float)-1.0;
     count=0;
-    basetime=time(NULL);
+
+    gettimeofday(&basetime);
+
 /*     progress("Generating reply", 0, 1);  */
     do {
 	replywords=reply(model, keywords);
@@ -2236,7 +2245,8 @@ char *generate_reply(MODEL *model, DICTIONARY *words)
 	    output=make_output(replywords);
 	}
 /*  	progress(NULL, (time(NULL)-basetime),timeout); */
-    } while((time(NULL)-basetime)<timeout);
+	gettimeofday(&endtime);
+    } while(ms_since(&basetime, &endtime) < timeout);
     progress(NULL, 1, 1);
 
     /*
