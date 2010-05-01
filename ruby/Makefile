@@ -4,27 +4,27 @@ SHELL = /bin/sh
 #### Start of system configuration section. ####
 
 srcdir = .
-topdir = /usr/lib64/ruby/1.8/x86_64-linux
+topdir = /usr/lib/ruby/1.8/i486-linux
 hdrdir = $(topdir)
 VPATH = $(srcdir):$(topdir):$(hdrdir)
-exec_prefix = $(DESTDIR)/usr
+exec_prefix = $(prefix)
 prefix = $(DESTDIR)/usr
-sharedstatedir = $(DESTDIR)/usr/com
-mandir = $(DESTDIR)/usr/share/man
+sharedstatedir = $(prefix)/com
+mandir = $(prefix)/share/man
 psdir = $(docdir)
 oldincludedir = $(DESTDIR)/usr/include
 localedir = $(datarootdir)/locale
-bindir = $(DESTDIR)/usr/bin
-libexecdir = $(DESTDIR)/usr/lib64
-sitedir = $(libdir)/ruby/site_ruby
+bindir = $(exec_prefix)/bin
+libexecdir = $(prefix)/lib/ruby1.8
+sitedir = $(DESTDIR)/usr/local/lib/site_ruby
 htmldir = $(docdir)
 vendorarchdir = $(vendorlibdir)/$(sitearch)
-includedir = $(DESTDIR)/usr/include
-infodir = $(DESTDIR)/usr/share/info
+includedir = $(prefix)/include
+infodir = $(prefix)/share/info
 vendorlibdir = $(vendordir)/$(ruby_version)
 sysconfdir = $(DESTDIR)/etc
-libdir = $(DESTDIR)/usr/lib64
-sbindir = $(DESTDIR)/usr/sbin
+libdir = $(exec_prefix)/lib
+sbindir = $(exec_prefix)/sbin
 rubylibdir = $(libdir)/ruby/$(ruby_version)
 docdir = $(datarootdir)/doc/$(PACKAGE)
 dvidir = $(docdir)
@@ -33,23 +33,23 @@ datarootdir = $(prefix)/share
 pdfdir = $(docdir)
 archdir = $(rubylibdir)/$(arch)
 sitearchdir = $(sitelibdir)/$(sitearch)
-datadir = $(DESTDIR)/usr/share
+datadir = $(datarootdir)
 localstatedir = $(DESTDIR)/var
 sitelibdir = $(sitedir)/$(ruby_version)
 
-CC = gcc
+CC = cc
 LIBRUBY = $(LIBRUBY_SO)
 LIBRUBY_A = lib$(RUBY_SO_NAME)-static.a
-LIBRUBYARG_SHARED = -Wl,-R -Wl,$(libdir) -L$(libdir) -l$(RUBY_SO_NAME)
+LIBRUBYARG_SHARED = -l$(RUBY_SO_NAME)
 LIBRUBYARG_STATIC = -l$(RUBY_SO_NAME)-static
 
 RUBY_EXTCONF_H = 
-CFLAGS   =  -fPIC -fmessage-length=0 -O2 -Wall -D_FORTIFY_SOURCE=2 -fstack-protector -funwind-tables -fasynchronous-unwind-tables -g -g -fno-strict-aliasing  -fPIC $(cflags) 
+CFLAGS   =  -fPIC -fno-strict-aliasing -g -g -O2  -fPIC $(cflags) 
 INCFLAGS = -I. -I$(topdir) -I$(hdrdir) -I$(srcdir)
-DEFS     = 
+DEFS     = -D_FILE_OFFSET_BITS=64
 CPPFLAGS =   $(DEFS) $(cppflags)
 CXXFLAGS = $(CFLAGS) 
-ldflags  = -L.  -rdynamic -Wl,-export-dynamic
+ldflags  = -L. -Wl,-Bsymbolic-functions -rdynamic -Wl,-export-dynamic
 dldflags = 
 archflag = 
 DLDFLAGS = $(ldflags) $(dldflags) $(archflag)
@@ -57,12 +57,12 @@ LDSHARED = $(CC) -shared
 AR = ar
 EXEEXT = 
 
-RUBY_INSTALL_NAME = ruby
-RUBY_SO_NAME = ruby
-arch = x86_64-linux
-sitearch = x86_64-linux
+RUBY_INSTALL_NAME = ruby1.8
+RUBY_SO_NAME = ruby1.8
+arch = i486-linux
+sitearch = i486-linux
 ruby_version = 1.8
-ruby = /usr/bin/ruby
+ruby = /usr/bin/ruby1.8
 RUBY = $(ruby)
 RM = rm -f
 MAKEDIRS = mkdir -p
@@ -76,7 +76,7 @@ COPY = cp
 preload = 
 
 libpath = . $(libdir)
-LIBPATH =  -L. -L$(libdir) -Wl,-R$(libdir)
+LIBPATH =  -L. -L$(libdir)
 DEFFILE = 
 
 CLEANFILES = mkmf.log
@@ -86,7 +86,7 @@ extout =
 extout_prefix = 
 target_prefix = 
 LOCAL_LIBS = 
-LIBS = $(LIBRUBYARG_SHARED)  -ldl -lcrypt -lm   -lc
+LIBS = $(LIBRUBYARG_SHARED)  -lpthread -lrt -ldl -lcrypt -lm   -lc
 SRCS = megahal.c ruby-interface.c
 OBJS = megahal.o ruby-interface.o
 TARGET = Hal
@@ -148,7 +148,7 @@ site-install-rb: install-rb
 .c.o:
 	$(CC) $(INCFLAGS) $(CPPFLAGS) $(CFLAGS) -c $<
 
-$(DLLIB): $(OBJS)
+$(DLLIB): $(OBJS) Makefile
 	@-$(RM) $@
 	$(LDSHARED) -o $@ $(OBJS) $(LIBPATH) $(DLDFLAGS) $(LOCAL_LIBS) $(LIBS)
 

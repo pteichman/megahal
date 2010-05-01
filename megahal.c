@@ -131,7 +131,7 @@
 #define MIN(a,b) ((a)<(b))?(a):(b)
 
 #define COOKIE "MegaHALv8"
-#define TIMEOUT 1000 /* milliseconds */
+#define TIMEOUT 500 /* milliseconds */
 
 #define DEFAULT "."
 
