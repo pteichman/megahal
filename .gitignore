@@ -17,5 +17,6 @@ megahal.dic.backup
 megahal.log
 megahal.o
 megahal.txt
+ruby/Hal.so
+ruby/ruby-interface.o
 tcl-interface.o
-
