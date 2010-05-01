@@ -2197,6 +2197,7 @@ char *generate_reply(MODEL *model, DICTIONARY *words)
     static char *output_none=NULL;
     int count;
     int basetime;
+    int max_length;
     int timeout = TIMEOUT;
 
     /*
@@ -2231,6 +2232,7 @@ char *generate_reply(MODEL *model, DICTIONARY *words)
 	++count;
 	if((surprise>max_surprise)&&(dissimilar(words, replywords)==TRUE)) {
 	    max_surprise=surprise;
+	    max_length = replywords->size;
 	    output=make_output(replywords);
 	}
 /*  	progress(NULL, (time(NULL)-basetime),timeout); */
