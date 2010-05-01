@@ -2238,6 +2238,7 @@ char *generate_reply(MODEL *model, DICTIONARY *words)
     do {
 	replywords=reply(model, keywords);
 	surprise=evaluate_reply(model, keywords, replywords);
+	fprintf(stderr, "Brain.reply_score %d\n", (int)(1000*surprise));
 	++count;
 	if((surprise>max_surprise)&&(dissimilar(words, replywords)==TRUE)) {
 	    max_surprise=surprise;
@@ -2248,6 +2249,10 @@ char *generate_reply(MODEL *model, DICTIONARY *words)
 	gettimeofday(&endtime);
     } while(ms_since(&basetime, &endtime) < timeout);
     progress(NULL, 1, 1);
+
+    fprintf(stderr, "Brain.reply_count %d\n", count);
+    fprintf(stderr, "Brain.best_reply_score %d\n", (int)(1000*surprise));
+    fprintf(stderr, "Brain.best_reply_length %d\n", max_length);
 
     /*
      *		Return the best answer we generated
